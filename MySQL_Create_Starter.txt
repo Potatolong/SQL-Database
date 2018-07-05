@@ -1,0 +1,243 @@
+/*Dropping the company database if it exist*/
+
+DROP DATABASE IF EXISTS company;
+CREATE DATABASE company;
+USE company;
+
+/*drop location for project table*/
+
+DROP DATABASE IF EXISTS project;
+CREATE DATABASE project;
+USE project;
+
+/*drop location for deptlocation table*/
+
+DROP DATABASE IF EXISTS deptlocation;
+CREATE DATABASE deptlocation;
+USE deptlocation;
+
+/*drop location department table*/
+
+DROP DATABASE IF EXISTS department;
+CREATE DATABASE department;
+USE department;
+
+/*drop location for dependent table*/
+
+DROP DATABASE IF EXISTS dependent;
+CREATE DATABASE dependent;
+USE dependent;
+
+/*drop location for employee table*/
+
+DROP DATABASE IF EXISTS employee;
+CREATE DATABASE employee;
+USE employee;
+
+/*Creating a table for employee*/
+
+CREATE TABLE employee (
+	fname				VARCHAR(20)	NOT NULL,
+	mint				VARCHAR(1)	NOT NULL,
+	lname				VARCHAR(40)	NOT NULL,
+	ssn					CHAR(9),
+	bdate				DATE,
+	address				VARCHAR(50),
+	sex					CHAR(3),
+	salary				DECIMAL(8,2),
+	superssn			CHAR(9),
+	dno					VARCHAR(8),
+	CONSTRAINT			empPK
+		PRIMARY KEY		(ssn),
+	CONSTRAINT			empsuperFK
+		FOREIGN KEY		(superssn)
+		REFERENCES		employee (ssn)	
+);
+
+/*Creating a table for dependent*/
+
+CREATE TABLE dependent (
+	essn				VARCHAR(9)	NOT NULL,
+	dependent_name		VARCHAR(20)	NOT NULL,
+	sex					CHAR(9),
+	bdate				DATE,
+	relationships		VARCHAR(20),
+	CONSTRAINT			dependPK
+		PRIMARY KEY		(essn, dependent_name),
+	CONSTRAINT				
+		FOREIGN KEY 	(ssn)
+		REFERENCES		dependent (essn)
+);
+		
+/*Creating a table for department*/
+
+CREATE TABLE department (
+	dname				VARCHAR(20),
+	dnumber				CHAR(9),
+	mgr_ssn				CHAR(9),
+	mgr_start_date		DATE,
+	CONSTRAINT			departPK
+		PRIMARY KEY		(dnumber),
+	CONSTRAINT			departFK
+		FOREIGN KEY		(dnumber)
+		REFERENCES		department (dnumber)		
+);
+
+/*Creating a table for deptlocation*/
+
+CREATE TABLE deptlocation (
+	dnumber					CHAR(9),
+	dlocation				VARCHAR(50),
+	CONSTRAINT				deptlocPK
+		PRIMARY KEY			(dnumber,dlocation),
+	CONSTRAINT				departlocFK
+		FOREIGN KEY			(dnumber)
+		REFERENCES			deptlocation (dnumber,dlocation)	
+);
+
+/*Creating a table for project*/
+
+CREATE TABLE project (
+	pname				VARCHAR(20),
+	pnumber				CHAR(9),
+	plocation			VARCHAR(50),
+	dnum				CHAR(9),
+	CONSTRAINT			projectPK
+		PRIMARY KEY 	(pnumber),
+	CONSTRAINT 			projectFK
+		FOREIGN KEY		(dnum)
+		REFERENCES		project (pnumber)	
+);
+
+/*Create a table for workson*/
+
+CREATE TABLE workson (
+	essn				CHAR(9),
+	pno					CHAR(9),
+	hours				CHAR(9),
+	CONSTRAINT			worksonPK
+		PRIMARY KEY		(essn,pno),
+	CONSTRAINT			worksonFK
+		FOREIGN KEY		(essn)
+		REFERENCES		workson (essn,pno)	
+);
+
+/*This statement adds a foreign key to the employee table*/
+
+ALTER TABLE employee
+ADD CONSTRAINT		empdepFK
+	FOREIGN KEY		(dno)
+	REFERENCES		department (dnumber);
+	
+/*The below statement turns off referential integrity checks for the INSERT statements*/
+
+SET FOREIGN_KEY_CHECKS=0;	
+
+/*This is one of the INSERT statements for the employee table*/
+
+INSERT INTO employee VALUES
+	('John','B','Smith','123456789','1965-01-09','731 Foundren, Houston,
+	TX','M','30000','333445555','5')
+	
+	('Franklin','T','Wong','333445555','1955-12-08','638 Voss, Houston,
+	TX','M','40000','888665555','5')
+	
+	('Alicia','J','Zelaya','999987777','1968-01-19','3321 Castle, Spring,
+	TX','F','25000','987654321','4')
+	
+	('Jennifer','S','Wallace','987654321','1941-06-20','291 Berry, Bellaire,
+	TX','F','43000','888665555','4')
+    
+    ('Ramesh','K','Narayan,','66684444','1962-09-15,','975 Fire Oak, Humble,
+    TX','M','38000','333445555','5')
+    
+    ('Joyce','A,','English,','453453453,','1972-07-03,','5631 Rice, Houston,
+    TX,','F,','25000,','333445555,','5')
+    
+    ('Ahmad,','V,','Jabbar,','987987987,','1969-03-29,','980 Dallas, Houston,
+    TX,','M,','25000','987654321','4')
+    
+    ('James,','E,','Borg,','988665555,','1937-11-10,','450 Stone, Houston,
+    TX,','M,','55000,','NULL,','1')
+    
+    INSERT INTO dependent VALUES
+    ('333445555,','Alice,','F,','1986-04-05,','Daughter')
+    
+    ('333445555,','Theordore,','M,','1983-10-25,','Son')
+    
+    ('333445555,','Joy,','F,','1958-05-03,','Spouse')
+    
+    ('987654321,','Abner,','M,','1942-02-28,','Spouse')
+    
+    ('123456789','Michael,','M,','1988-01-04','Son')
+    
+    ('123456789,','Alice,','F,','1988-12-30,','Daughter')
+    
+    ('123456789','Elizabeth','F,','1967-05-05,','Spouse')
+    
+    INSERT INTO department VALUES
+    ('Research,','5,','333445555,','1988-05-22')
+    
+    ('Adminstration,','4,','987654321,','1955-01-01')
+    
+    ('Headquarters,','1,','888665555,','1981-06-19')
+    
+    INSERT INTO deptlocation VALUES
+    ('1,','Houston')
+    
+    ('4,','Stafford')
+    
+    ('5,','Bellaire')
+    
+    ('5,','Sugarland')
+    
+    ('5,','Houston')
+    
+    INSERT INTO project VALUES
+    ('ProductX,','1,','Bellaire,','5')
+    
+    ('ProductY,','2,','Sugarland,','5')
+    
+    ('ProductZ,','3,','Houston,','5')
+    
+    ('Computerization,','10,','Stafford,','4')
+    
+    ('Reorganization,','20,','Houston,','1')
+    
+    ('Newbenefits,','30,','Stafford,','4')
+    
+    INSERT INTO workson VALUES
+    ('123456789,','1,','32.5')
+    
+    ('123456789,','2,','7.5')
+    
+    ('66884444,','3,','40.0')
+    
+    ('453453453,','1,','20.0')
+    
+    ('453453453,','2,','20.0')
+    
+    ('333445555,','2,','10.0')
+    
+    ('333445555,','3,','10.0')
+    
+    ('333445555,','20,','10.0')
+    
+    ('999887777,','30,','30.0')
+    
+    ('999887777,','10,','10.0')
+    
+    ('987987987,','10,','35.0')
+    
+    ('987987987,','30,','5.0')
+    
+    ('987654321,','30,','20.0')
+    
+    ('987654321','20,','15.0')
+    
+    ('888665555,','20,','NULL')
+    
+    /*Command turns the referential integrity checks back on*/
+    
+    SET FOREIGN_KEY_CHECKS=1;
+    
